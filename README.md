@@ -4,6 +4,8 @@ Herramienta sencilla para carga el dataset de los RNCs de la DGII.
 
 Puede ser útil para actualizar rápidamente la información en los flujos de trabajo.
 
+Fuente del dataset: https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip
+
 ## Dependencias
 
     - Polars
