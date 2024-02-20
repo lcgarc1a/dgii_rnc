@@ -5,7 +5,7 @@ with open("README.md", "r", encoding = "utf-8") as fh:
 
 setup(
     name='dgii_rnc',
-    version='0.3',
+    version='0.4',
     author='Luis C Garcia',
     packages=find_packages(where="src"),
     install_requires=[
