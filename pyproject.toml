@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools >= 69.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dgii_rnc"
+version = "0.3"
+dependencies = [
+  "polars"
+]
+authors = [{name = "Luis C Garcia"}]
+readme = "README.md"
+license = {text = "MIT License"}
+keywords = ["dgii", "rnc"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Information Technology",
+  "Topic :: Utilities",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3"
+]
+requires-python = ">= 3.6"
+
+[project.urls]
+Repository = "https://github.com/lcgarc1a/dgii_rnc.git"
+Issues = "https://github.com/lcgarc1a/dgii_rnc/issues"
