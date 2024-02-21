@@ -15,3 +15,5 @@ Los cambios notables de este proyecto serán documentas en este archivo.
 ### Correcciones
 
 - Corrección de la estructura del folder `src`
+
+[0.4]: https://github.com/lcgarc1a/dgii_rnc/releases/tag/0.4
