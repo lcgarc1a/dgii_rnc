@@ -1,14 +1,23 @@
 # Dataset de los RNCs de la DGII de República Dominicana
 
+[![PyPI - Version](https://img.shields.io/pypi/v/dgii-rnc)](https://pypi.org/project/dgii-rnc/) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dgii-rnc)
+ ![PyPI - Status](https://img.shields.io/pypi/status/dgii-rnc) [![changelog](https://img.shields.io/badge/changelog-5A5A5A)](changelog)
+
 Herramienta sencilla para carga el dataset de los RNCs de la DGII.
 
 Puede ser útil para actualizar rápidamente la información en los flujos de trabajo.
 
-Fuente del dataset: https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip
+Fuente del dataset: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip]
+
+## Instalación
+
+```python
+>>> pip install dgii-rnc
+```
 
 ## Dependencias
 
-    - Polars
+- Polars
 
 ## Modo de Uso
 
@@ -42,4 +51,3 @@ shape: (4, 7)
 ```python
 >>> df = df.to_pandas()
 ```
-
