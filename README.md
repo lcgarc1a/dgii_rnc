@@ -1,7 +1,7 @@
 # Dataset de los RNCs de la DGII de República Dominicana
 
-[![PyPI - Version](https://img.shields.io/pypi/v/dgii-rnc)](https://pypi.org/project/dgii-rnc/) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dgii-rnc)
- ![PyPI - Status](https://img.shields.io/pypi/status/dgii-rnc) [![changelog](https://img.shields.io/badge/changelog-5A5A5A)](changelog)
+[![PyPI - Version](https://img.shields.io/pypi/v/dgii-rnc)](https://pypi.org/project/dgii-rnc/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dgii-rnc)](https://www.python.org/downloads/)
+ ![PyPI - Status](https://img.shields.io/pypi/status/dgii-rnc) [![changelog](https://img.shields.io/badge/changelog-5A5A5A)](./CHANGELOG.md)
 
 Herramienta sencilla para carga el dataset de los RNCs de la DGII.
 
