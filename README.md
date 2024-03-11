@@ -30,20 +30,64 @@ Fuente del dataset: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.
 >>> df = dgii_handler.rnc_df()
 
 >>> df.shape
-(728522, 7)
+(735018, 7)
 
 >>> df.filter(pl.col("NOMBRE").str.contains("BANCO CENTRAL"))
 shape: (4, 7)
-+-----------+-------------------------------------------------------------------+----------------------------------+--------------------------------+------------+--------------+--------+
-| ID        | NOMBRE                                                            | NOMBRE_COMERCIAL                 | CATEGORIA                      | FECHA      | REGIMEN_PAGO | ESTADO |
-| ---       | ---                                                               | ---                              | ---                            | ---        | ---          | ---    |
-| str       | str                                                               | str                              | str                            | str        | str          | str    |
-+========================================================================================================================================================================================+
-| 401007551 | BANCO CENTRAL DE LA REPUBLICA DOMINICANA                          | null                             | SERV GRALES DE LA ADM PÚBLICA  | 23/10/1947 | ACTIVO       | NORMAL |
-| 430027715 | ARS PLAN SALUD BANCO CENTRAL                                      | ARS BANCO CENTRAL                | ADMINISTRACION DE RIESGOS DE S | 23/06/2003 | ACTIVO       | NORMAL |
-| 401508583 | FONDO DE JUBILACIONES Y PENSIONES DEL PERSONAL DEL BANCO CENTRAL  | null                             | ADMINISTRACIÓN DE FONDOS DE PE | 24/02/1999 | ACTIVO       | NORMAL |
-| 430118591 | CLUB EMPLEADOS DEL BANCO CENTRAL                                  | CLUB EMPLEADOS DEL BANCO CENTRAL | SERV. DE ORGANIZACIÓN, DIRECCI | 08/09/2011 | ACTIVO       | NORMAL |
-+-----------+-------------------------------------------------------------------+----------------------------------+--------------------------------+------------+--------------+--------+
++-----------+----------------+----------------+---------------+------------+--------------+--------+
+| ID        | NOMBRE         | NOMBRE_COMERCI | CATEGORIA     | FECHA      | REGIMEN_PAGO | ESTADO |
+| ---       | ---            | AL             | ---           | ---        | ---          | ---    |
+| str       | str            | ---            | str           | str        | str          | str    |
+|           |                | str            |               |            |              |        |
++==================================================================================================+
+| 401007551 | BANCO CENTRAL  | null           | SERV GRALES   | 23/10/1947 | ACTIVO       | NORMAL |
+|           | DE LA          |                | DE LA ADM     |            |              |        |
+|           | REPUBLICA      |                | PÚBLICA       |            |              |        |
+|           | DOMINICANA     |                |               |            |              |        |
+| 430027715 | ARS PLAN SALUD | ARS BANCO      | ADMINISTRACIO | 23/06/2003 | ACTIVO       | NORMAL |
+|           | BANCO CENTRAL  | CENTRAL        | N DE RIESGOS  |            |              |        |
+|           |                |                | DE S          |            |              |        |
+| 401508583 | FONDO DE       | null           | ADMINISTRACIÓ | 24/02/1999 | ACTIVO       | NORMAL |
+|           | JUBILACIONES Y |                | N DE FONDOS   |            |              |        |
+|           | PENSIONES DEL  |                | DE PE         |            |              |        |
+|           | PERSONAL DEL   |                |               |            |              |        |
+|           | BANCO CENTRAL  |                |               |            |              |        |
+| 430118591 | CLUB EMPLEADOS | CLUB EMPLEADOS | SERV. DE      | 08/09/2011 | ACTIVO       | NORMAL |
+|           | DEL BANCO      | DEL BANCO      | ORGANIZACIÓN, |            |              |        |
+|           | CENTRAL        | CENTRAL        | DIRECCI       |            |              |        |
++-----------+----------------+----------------+---------------+------------+--------------+--------+
+```
+
+### Busquedas
+
+```python
+>>> # Busqueda 'local'
+>>> search_query = dgii_handler.search({'NOMBRE':'BANCO CENTRAL DE LA REPUBLICA'})
+>>> print(search_query)
+shape: (1, 7)
++-----------+----------------+----------------+---------------+------------+--------------+--------+
+| ID        | NOMBRE         | NOMBRE_COMERCI | CATEGORIA     | FECHA      | REGIMEN_PAGO | ESTADO |
+| ---       | ---            | AL             | ---           | ---        | ---          | ---    |
+| str       | str            | ---            | str           | str        | str          | str    |
+|           |                | str            |               |            |              |        |
++==================================================================================================+
+| 401007551 | BANCO CENTRAL  | null           | SERV GRALES   | 23/10/1947 | ACTIVO       | NORMAL |
+|           | DE LA          |                | DE LA ADM     |            |              |        |
+|           | REPUBLICA      |                | PÚBLICA       |            |              |        |
+|           | DOMINICANA     |                |               |            |              |        |
++-----------+----------------+----------------+---------------+------------+--------------+--------+
+
+>>> # Busqueda 'web'
+>>> web_search_query = dgii_handler.web_search('401007551')
+>>> web_search_query.to_dicts()
+>>> [{'Cédula/RNC': '401-00755-1',
+...  'Nombre/Razón Social': 'BANCO CENTRAL DE LA REPUBLICA DOMINICANA',
+...  'Nombre Comercial': ' ',
+...  'Categoría': '',
+...  'Régimen de pagos': 'NORMAL',
+...  'Estado': 'ACTIVO',
+...  'Actividad Economica': 'SERV GRALES DE LA ADM PÚBLICA (INCL. EL DESEMPEÑO DE FUNCIONES EJECUTIVAS Y LEGISLATIVAS DE ADM POR PARTE DE LAS ENTIDADES DE LA A',
+...  'Administracion Local': 'ADM LOCAL GGC'}]
 ```
 
 ### Convertir en dataframe de pandas
