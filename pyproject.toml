@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dgii_rnc"
-version = "0.4"
+version = "0.5"
 dependencies = [
-  "polars"
+  "polars", "selenium"
 ]
 authors = [{name = "Luis C Garcia"}]
 readme = "README.md"
@@ -17,9 +17,9 @@ classifiers = [
   "Intended Audience :: Information Technology",
   "Topic :: Utilities",
   "License :: OSI Approved :: MIT License",
-  "Programming Language :: Python :: 3"
+  "Programming Language :: Python :: 3.10"
 ]
-requires-python = ">= 3.6"
+requires-python = ">= 3.10"
 
 [project.urls]
 Repository = "https://github.com/lcgarc1a/dgii_rnc.git"
