@@ -18,6 +18,7 @@ Fuente del dataset: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.
 ## Dependencias
 
 - Polars
+- Selenium
 
 ## Modo de Uso
 
