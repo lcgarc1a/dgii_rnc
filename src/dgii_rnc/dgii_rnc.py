@@ -11,12 +11,13 @@ from datetime import date, datetime
 from io import BytesIO
 from urllib.request import urlopen
 from zipfile import ZipFile
+from functools import lru_cache
 
 import polars as pl
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class RNCHandler:
@@ -159,6 +160,7 @@ está registrado el RNC.
         self.check_file()
         return self.df
 
+    @lru_cache
     def web_search(self, search_string: str) -> pl.DataFrame | None:
         """Busca en la web de consulta de RNCs los datos del contribuyente.
 

@@ -106,3 +106,5 @@ GitHub.sublime-settings
 .history
 
 DGII_RNC.TXT
+*.whl
+*.gz
