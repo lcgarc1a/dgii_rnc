@@ -1,28 +1,26 @@
-# Dataset de los RNCs de la DGII de República Dominicana
+# Dominican Republic Taxpayer Dataset and Search Tool
 
 [![PyPI - Version](https://img.shields.io/pypi/v/dgii-rnc)](https://pypi.org/project/dgii-rnc/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dgii-rnc)](https://www.python.org/downloads/)
  ![PyPI - Status](https://img.shields.io/pypi/status/dgii-rnc) [![changelog](https://img.shields.io/badge/changelog-5A5A5A)](./CHANGELOG.md)
 
-Herramienta sencilla para carga el dataset de los RNCs de la DGII.
+Simple tool to load the dataset of taxpayers of the Dominican Republic. It can be used to correct data on names or IDs registered in some data source, as well as being integrated into a much larger application.
 
-Puede ser útil para actualizar rápidamente la información en los flujos de trabajo.
+Source: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip]
 
-Fuente del dataset: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip]
-
-## Instalación
+## Installation
 
 ```python
 >>> pip install dgii-rnc
 ```
 
-## Dependencias
+## Dependencies
 
 - Polars
 - Selenium
 
-## Modo de Uso
+## How to use
 
-### Cargar dataset de RNCs
+### Getting the dataset
 
 ```python
 >>> from dgii_rnc.dgii_rnc import dgii_handler
@@ -59,10 +57,12 @@ shape: (4, 7)
 +-----------+----------------+----------------+---------------+------------+--------------+--------+
 ```
 
-### Busquedas
+### Searches
+
+#### Local
 
 ```python
->>> # Busqueda 'local'
+>>> # 'Csv' search
 >>> search_query = dgii_handler.search({'NOMBRE':'BANCO CENTRAL DE LA REPUBLICA'})
 >>> print(search_query)
 shape: (1, 7)
@@ -77,8 +77,12 @@ shape: (1, 7)
 |           | REPUBLICA      |                | PÚBLICA       |            |              |        |
 |           | DOMINICANA     |                |               |            |              |        |
 +-----------+----------------+----------------+---------------+------------+--------------+--------+
+```
 
->>> # Busqueda 'web'
+#### Web
+
+```python
+>>> # 'Web' search
 >>> web_search_query = dgii_handler.web_search('401007551')
 >>> web_search_query.to_dicts()
 >>> [{'Cédula/RNC': '401-00755-1',
@@ -91,7 +95,7 @@ shape: (1, 7)
 ...  'Administracion Local': 'ADM LOCAL GGC'}]
 ```
 
-### Convertir en dataframe de pandas
+### Convert to pandas dataframe
 
 ```python
 >>> df = df.to_pandas()
