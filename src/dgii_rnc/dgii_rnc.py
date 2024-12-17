@@ -4,107 +4,109 @@ Usos:
 - Busqueda puntual de algún 'NOMBRE' o 'ID' (RNC)
 - Cargar el dataset completo.
 """
+from __future__ import annotations
 
-import os
 import shutil
-from datetime import date, datetime
+from contextlib import closing
+from datetime import datetime
 from io import BytesIO
-from urllib.request import urlopen
+from pathlib import Path
 from zipfile import ZipFile
+from zoneinfo import ZoneInfo
 
 import polars as pl
+import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
+tz = ZoneInfo("America/Santo_Domingo")
 
 class RNCHandler:
-    """RNCHandler.
-    """
+    """RNCHandler."""
 
     def __init__(self) -> None:
+        """__init__."""
         self.df = pl.DataFrame()
 
     def download_file(self) -> None:
-        """Función para descargar el archivo y extraer el csv.
-        """
-
+        """Función para descargar el archivo y extraer el csv."""
         zip_url = "https://www.dgii.gov.do/app/WebApps/Consultas/\
 RNC/DGII_RNC.zip"
 
-        with urlopen(zip_url) as zip_resp:
-            with ZipFile(BytesIO(zip_resp.read())) as zfile:
-                with zfile.open(
-                    "TMP/DGII_RNC.TXT"
-                ) as zf, open(
-                    os.path.join(os.getcwd(), 'DGII_RNC.TXT'), 'wb'
-                ) as f:
+        with closing(requests.get(zip_url, timeout=60, stream=True)) as response:  # noqa: E501
+            response.raise_for_status()
+            with BytesIO() as buffer:
+                for chunk in response.iter_content(chunk_size=1024 * 1024):  # 1MB chunks  # noqa: E501
+                    buffer.write(chunk)
+                buffer.seek(0)  # Reset buffer position
+
+                # Process the zip file
+                with ZipFile(buffer) as zfile, \
+                    zfile.open("TMP/DGII_RNC.TXT") as zf, \
+                    Path.open(Path.cwd() / "DGII_RNC.TXT", mode="wb") as f:
                     shutil.copyfileobj(zf, f)
 
     def check_file(self) -> None:
         """Función para validar si el archivo ya existe en la fecha actual.
+
         Si se cumple, entonces no se descarga.
         """
+        file_path = "DGII_RNC.TXT"
 
-        file_path = 'DGII_RNC.TXT'
-
-        if os.path.isfile(file_path):
+        if Path(file_path).is_file():
             file_creation_date = datetime.fromtimestamp(
-                os.path.getmtime(file_path)
+                Path(file_path).stat().st_mtime,
+                tz=tz,
             ).date()
-            if file_creation_date != date.today():
+            if file_creation_date != datetime.now(tz=tz).date():
                 self.download_file()
         else:
             self.download_file()
 
-        with open('DGII_RNC.TXT', 'r', encoding='Latin-1') as fh:
+        with Path(file_path).open(encoding="Latin-1") as fh:
             self.df = (
                 pl.read_csv(
-                    fh.read().encode('utf-8'),
-                    separator='|',
+                    fh.read().encode("utf-8"),
+                    separator="|",
                     has_header=False,
-                    encoding='utf8-lossy',
+                    encoding="utf8-lossy",
                     dtypes=[pl.Utf8],
-                    quote_char=None
+                    quote_char=None,
                 )
             )
 
-        self.df = (
-            self.df.rename(
-                {
-                    'column_1': 'ID',
-                    'column_2': 'NOMBRE',
-                    'column_3': 'NOMBRE_COMERCIAL',
-                    'column_4': 'CATEGORIA',
-                    'column_5': 'x1',
-                    'column_6': 'x2',
-                    'column_7': 'x3',
-                    'column_8': 'x4',
-                    'column_9': 'FECHA',
-                    'column_10': 'REGIMEN_PAGO',
-                    'column_11': 'ESTADO'
-                }
-            )
+        self.df = self.df.rename(
+            {
+                "column_1": "ID",
+                "column_2": "NOMBRE",
+                "column_3": "NOMBRE_COMERCIAL",
+                "column_4": "CATEGORIA",
+                "column_5": "x1",
+                "column_6": "x2",
+                "column_7": "x3",
+                "column_8": "x4",
+                "column_9": "FECHA",
+                "column_10": "REGIMEN_PAGO",
+                "column_11": "ESTADO",
+            },
         )
 
-        self.df = (
-            self.df
-            .select(
-                [
-                    'ID',
-                    'NOMBRE',
-                    'NOMBRE_COMERCIAL',
-                    'CATEGORIA',
-                    'FECHA',
-                    'REGIMEN_PAGO',
-                    'ESTADO'
-                ]
-            )
+        self.df = self.df.select(
+            [
+                "ID",
+                "NOMBRE",
+                "NOMBRE_COMERCIAL",
+                "CATEGORIA",
+                "FECHA",
+                "REGIMEN_PAGO",
+                "ESTADO",
+            ],
         )
 
     def search(self, criteria: dict) -> pl.DataFrame:
-        """Función para hacer una busqueda puntual con estos argumentos:
+        """Función para hacer una busqueda puntual con estos argumentos.
 
             - 'NOMBRE' -> str, nombre bajo el cual está registrado el RNC.
             - 'NOMBRE_COMERCIAL' -> str, es el nombre comercial con el cual \
@@ -115,47 +117,44 @@ está registrado el RNC.
 
         Usa la descarga del archivo csv.
         """
-
         self.check_file()
 
         query = self.df
 
         for key, value in criteria.items():
 
-            if key == 'ID':
+            if key == "ID":
                 query = (
                     query
                     .filter(
-                        pl.col('ID') == value
+                        pl.col("ID") == value,
                     )
                 )
 
-            elif key == 'NOMBRE':
+            elif key == "NOMBRE":
                 query = (
                     query
                     .filter(
-                        pl.col('NOMBRE').str
+                        pl.col("NOMBRE").str
                         .to_uppercase().str
-                        .contains(value.upper())
+                        .contains(value.upper()),
                     )
                 )
 
-            elif key == 'NOMBRE_COMERCIAL':
+            elif key == "NOMBRE_COMERCIAL":
                 query = (
                     query
                     .filter(
-                        pl.col('NOMBRE_COMERCIAL').str
+                        pl.col("NOMBRE_COMERCIAL").str
                         .to_uppercase().str
-                        .contains(value.upper())
+                        .contains(value.upper()),
                     )
                 )
 
         return query
 
     def rnc_df(self) -> pl.DataFrame:
-        """Función que devuelve un dataframe con todos los RNCs.
-        """
-
+        """Función que devuelve un dataframe con todos los RNCs."""
         self.check_file()
         return self.df
 
@@ -169,26 +168,30 @@ está registrado el RNC.
 
         Returns:
             pl.DataFrame | None: Datos del contribuyente si existen.
-        """
 
+        """
         if not isinstance(search_string, str):
+            msg = """Valor buscado no es un texto."""
             raise TypeError(
-                """Valor buscado no es un texto."""
+                msg,
             )
 
         if not search_string.isnumeric():
+            msg = """Valor buscado solo debe contener texto numérico."""
             raise ValueError(
-                """Valor buscado solo debe contener texto numérico."""
+                msg,
             )
 
         if len(search_string) not in [9, 11]:
+            msg = """La longitud del texto numérico debe ser 9 ó 11."""
             raise ValueError(
-                """La longitud del texto numérico debe ser 9 ó 11."""
+                msg,
             )
 
-        if search_string not in self.rnc_df()['ID']:
+        if search_string not in self.rnc_df()["ID"]:
+            msg = """Cédula/RNC No válido."""
             raise ValueError(
-                """Cédula/RNC No válido."""
+                msg,
             )
 
         options = webdriver.ChromeOptions()
@@ -204,10 +207,10 @@ está registrado el RNC.
         elem_input = (
             wait
             .until(
-                EC
+                ec
                 .element_to_be_clickable(
-                    (By.ID, "ctl00_cphMain_txtRNCCedula")
-                )
+                    (By.ID, "ctl00_cphMain_txtRNCCedula"),
+                ),
             )
         )
 
@@ -216,10 +219,10 @@ está registrado el RNC.
         elem_submit = (
             wait
             .until(
-                EC
+                ec
                 .element_to_be_clickable(
-                    (By.ID, "ctl00_cphMain_btnBuscarPorRNC")
-                )
+                    (By.ID, "ctl00_cphMain_btnBuscarPorRNC"),
+                ),
             )
         )
 
@@ -228,10 +231,10 @@ está registrado el RNC.
         if (
             wait
             .until(
-                EC
+                ec
                 .visibility_of_element_located(
-                    (By.TAG_NAME, "td")
-                )
+                    (By.TAG_NAME, "td"),
+                ),
             )
         ):
 
@@ -251,14 +254,14 @@ está registrado el RNC.
                 vals.remove(value)
                 break
 
-        df = pl.DataFrame(
-            data_dict
+        res_df = pl.DataFrame(
+            data_dict,
         )
 
-        if df.is_empty():
-            print("No se encontraron datos registrados de este contribuyente.")
-        else:
-            return df
+        if res_df.is_empty():
+            print("No se encontraron datos registrados de este contribuyente.")  # noqa: T201
+            return None
+        return res_df
 
 
 # Crear una instancia de RNCHandler

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6] - 2024-12-17
+
+### 🐞 Fixes
+
+- Fix `IncompleteRead` error.
+
 ## [0.5] - 2024-03-11
 
 ### ✨ Enhancements
@@ -29,3 +35,4 @@
 
 [0.4]: https://github.com/lcgarc1a/dgii_rnc/releases/tag/0.4
 [0.5]: https://github.com/lcgarc1a/dgii_rnc/releases/tag/0.5
+[0.6]: https://github.com/lcgarc1a/dgii_rnc/releases/tag/0.6

@@ -10,7 +10,7 @@ Source: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip]
 ## Installation
 
 ```python
->>> pip install dgii-rnc
+pip install dgii-rnc
 ```
 
 ## Dependencies
@@ -23,15 +23,15 @@ Source: [https://www.dgii.gov.do/app/WebApps/Consultas/RNC/DGII_RNC.zip]
 ### Getting the dataset
 
 ```python
->>> from dgii_rnc.dgii_rnc import dgii_handler
->>> import polars as pl
+from dgii_rnc.dgii_rnc import dgii_handler
+import polars as pl
 
->>> df = dgii_handler.rnc_df()
+df = dgii_handler.rnc_df()
 
->>> df.shape
+df.shape
 (735018, 7)
 
->>> df.filter(pl.col("NOMBRE").str.contains("BANCO CENTRAL"))
+df.filter(pl.col("NOMBRE").str.contains("BANCO CENTRAL"))
 shape: (4, 7)
 +-----------+----------------+----------------+---------------+------------+--------------+--------+
 | ID        | NOMBRE         | NOMBRE_COMERCI | CATEGORIA     | FECHA      | REGIMEN_PAGO | ESTADO |
@@ -62,9 +62,9 @@ shape: (4, 7)
 #### Local
 
 ```python
->>> # 'Csv' search
->>> search_query = dgii_handler.search({'NOMBRE':'BANCO CENTRAL DE LA REPUBLICA'})
->>> print(search_query)
+# 'Csv' search
+search_query = dgii_handler.search({'NOMBRE':'BANCO CENTRAL DE LA REPUBLICA'})
+print(search_query)
 shape: (1, 7)
 +-----------+----------------+----------------+---------------+------------+--------------+--------+
 | ID        | NOMBRE         | NOMBRE_COMERCI | CATEGORIA     | FECHA      | REGIMEN_PAGO | ESTADO |
@@ -82,21 +82,21 @@ shape: (1, 7)
 #### Web
 
 ```python
->>> # 'Web' search
->>> web_search_query = dgii_handler.web_search('401007551')
->>> web_search_query.to_dicts()
->>> [{'Cédula/RNC': '401-00755-1',
-...  'Nombre/Razón Social': 'BANCO CENTRAL DE LA REPUBLICA DOMINICANA',
-...  'Nombre Comercial': ' ',
-...  'Categoría': '',
-...  'Régimen de pagos': 'NORMAL',
-...  'Estado': 'ACTIVO',
-...  'Actividad Economica': 'SERV GRALES DE LA ADM PÚBLICA (INCL. EL DESEMPEÑO DE FUNCIONES EJECUTIVAS Y LEGISLATIVAS DE ADM POR PARTE DE LAS ENTIDADES DE LA A',
-...  'Administracion Local': 'ADM LOCAL GGC'}]
+# 'Web' search
+web_search_query = dgii_handler.web_search('401007551')
+web_search_query.to_dicts()
+[{'Cédula/RNC': '401-00755-1',
+ 'Nombre/Razón Social': 'BANCO CENTRAL DE LA REPUBLICA DOMINICANA',
+ 'Nombre Comercial': ' ',
+ 'Categoría': '',
+ 'Régimen de pagos': 'NORMAL',
+ 'Estado': 'ACTIVO',
+ 'Actividad Economica': 'SERV GRALES DE LA ADM PÚBLICA (INCL. EL DESEMPEÑO DE FUNCIONES EJECUTIVAS Y LEGISLATIVAS DE ADM POR PARTE DE LAS ENTIDADES DE LA A',
+ 'Administracion Local': 'ADM LOCAL GGC'}]
 ```
 
 ### Convert to pandas dataframe
 
 ```python
->>> df = df.to_pandas()
+df = df.to_pandas()
 ```
